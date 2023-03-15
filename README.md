@@ -1,2 +1,2 @@
-# fancyga.github.io
-发现镓
+# 发现镓
+WELCOME TO MY WORLD...
