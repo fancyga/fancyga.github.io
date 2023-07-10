@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <!--<script src="underscore.js"></script>-->
+    <script src="http://cdn.bootcss.com/raphael/1.5.2/raphael-min.js"></script>
+    <script src="chord.js"></script>
+    <script src="tab.js"></script>
+    <script src="melody.js"></script>
+    <script src="yinweiaiqing.js"></script>
+    <script>
+        window.onload = function() {
+        var paper = new Raphael(document.getElementById('canvas_container'), 1200, 1600);
+        paper.draw_tabs(4);
+        paper.draw_chords(note_chords);
+        paper.draw_melodies(melodies);
+        }
+    </script>
+
+    <title></title>
+</head>
+<body>
+<div id="canvas_container" style="text-align: center"></div>
+</body>
+</html>
