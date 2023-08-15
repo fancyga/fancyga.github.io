@@ -1,0 +1,1047 @@
+<!doctype html>
+
+
+  
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>架构之四-发现镓</title>
+  
+  <meta name="keywords" content="架构,">
+
+<meta name="description" content="数据库的三级模式是哪三级？外模式（子模式、用户模式），概念模式，内模式。">
+<meta name="keywords" content="架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构之四">
+<meta property="og:url" content="http://www.fancyga.com/2023/08/10/架构之四/index.html">
+<meta property="og:site_name" content="发现镓">
+<meta property="og:description" content="数据库的三级模式是哪三级？外模式（子模式、用户模式），概念模式，内模式。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2023-08-10T09:29:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="架构之四">
+<meta name="twitter:description" content="数据库的三级模式是哪三级？外模式（子模式、用户模式），概念模式，内模式。">
+
+
+  <link rel="canonical" href="http://www.fancyga.com/2023/08/10/架构之四/">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+  <meta name="baidu-site-verification" content="wAcdUCCSr1">
+
+
+
+  
+  
+    
+  
+  <link href="/cdn/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="/cdn/pace-theme-minimal.css">
+  <script src="/cdn/pace.min.js"></script>
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+<link href="/cdn/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="alternate" href="/atom.xml" title="发现镓" type="application/atom+xml">
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.1.0">
+
+
+  <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: undefined,
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'BCDXWW18MV',
+      apiKey: '156dd69e5ea1334037799ce473064e07',
+      indexName: 'fancyga',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"搜索...","hits_empty":"未找到匹配结果: ${query}","hits_stats":"找到${hits} 条查询结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?4b3f4eeb2a5ddee114ae31fe440b904b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+  
+  
+    
+  
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">发现镓</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">fancyga ≈ 发现镓</p>
+</div>
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+<nav class="site-nav">
+  
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-top">
+          <a href="/top" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-signal"></i> <br>
+            
+            热榜
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-one">
+          <a href="/one" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            一句
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-timeline">
+          <a href="/timeline" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-road"></i> <br>
+            
+            时线
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <div class="moon-menu">
+  <div class="moon-menu-items">
+
+      <div class="moon-menu-item" id="moon-menu-item-back2bottom">
+        <i class="fa fa-chevron-down"></i>
+      </div>
+
+      <div class="moon-menu-item" id="moon-menu-item-back2top">
+        <i class="fa fa-chevron-up"></i>
+      </div>
+
+  </div>
+
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"/>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"/>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon">
+        <i class="fa fa-ellipsis-v"></i>
+      </div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                架构之四
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time title="创建于" itemprop="dateCreated" datetime="2023-08-10T17:29:00+08:00">
+              2023-08-10
+            </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/架构/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2023/08/10/架构之四/" class="leancloud_visitors" data-flag-title="架构之四">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span id="busuanzi_value_page_pv"></span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+          
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.6k</span>
+            </span>
+          
+          &nbsp; | &nbsp;
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>1 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="数据库的三级模式是哪三级？"><a href="#数据库的三级模式是哪三级？" class="headerlink" title="数据库的三级模式是哪三级？"></a>数据库的三级模式是哪三级？</h5><p>外模式（子模式、用户模式），概念模式，内模式。</p>
+<a id="more"></a>
+<h5 id="在数据库的体系结构中，什么模式体现了全体数据的逻辑结构和特征，是所有用户的公共数据视图？"><a href="#在数据库的体系结构中，什么模式体现了全体数据的逻辑结构和特征，是所有用户的公共数据视图？" class="headerlink" title="在数据库的体系结构中，什么模式体现了全体数据的逻辑结构和特征，是所有用户的公共数据视图？"></a>在数据库的体系结构中，什么模式体现了全体数据的逻辑结构和特征，是所有用户的公共数据视图？</h5><p>概念模式。</p>
+<h5 id="在数据库设计的需求分析阶段应完成包括（）在内的文档。"><a href="#在数据库设计的需求分析阶段应完成包括（）在内的文档。" class="headerlink" title="在数据库设计的需求分析阶段应完成包括（）在内的文档。"></a>在数据库设计的需求分析阶段应完成包括（）在内的文档。</h5><p>A.E-R图<br>B.关系模式<br>C.数据字典和数据流图<br>D.任务书和设计方案</p>
+<p>答案：C</p>
+<h5 id="RUP的特点是什么？"><a href="#RUP的特点是什么？" class="headerlink" title="RUP的特点是什么？"></a>RUP的特点是什么？</h5><p>RUP，Rational Unified Process，软件统一过程，是Rational软件公司创造的软件工程方法。</p>
+<p>有以下特点：</p>
+<ol>
+<li><p>用例驱动。RUP中的开发活动时用例驱动的，即需求分析、设计、实现和测试等活动都是用例驱动的。</p>
+</li>
+<li><p>以体系结构为中心。RUP中的开发活动时围绕体系结构展开的。</p>
+</li>
+</ol>
+<ul>
+<li>4+1视图</li>
+</ul>
+<p>围绕：</p>
+<p>场景（用例图）</p>
+<p>周边有：</p>
+<p>逻辑视图（类图） —————–&gt;实现（开发）视图（包图、组件图）</p>
+<p>进程（过程）视图（活动图）———-&gt;物理视图（部署图）  </p>
+<ol start="3">
+<li>迭代与增量。RUP强调要采用迭代和增量的方式来开发软件，把整个项目开发分为多个迭代过程。</li>
+</ol>
+<h5 id="RUP分为哪几个阶段，每个阶段的主要任务是什么？"><a href="#RUP分为哪几个阶段，每个阶段的主要任务是什么？" class="headerlink" title="RUP分为哪几个阶段，每个阶段的主要任务是什么？"></a>RUP分为哪几个阶段，每个阶段的主要任务是什么？</h5><p>RUP把软件开发生命周期划分为多个循环，每个循环生成产品的一个新的版本，每个循环依次由4个连续的阶段组成，包括：</p>
+<ol>
+<li>初始化（inception）阶段：定义最终产品视图和业务模型，并确定系统范围。</li>
+<li>细化（elaboration）阶段：设计及确定系统的体系结构，制定工作计划及资源要求。</li>
+<li>构造（construction）阶段：构造产品并继续演进需求、体系结构、计划直至产品提交。</li>
+<li>移交（transition）阶段：把产品提交给用户使用。</li>
+</ol>
+<h5 id="原型方法分为哪两个阶段？"><a href="#原型方法分为哪两个阶段？" class="headerlink" title="原型方法分为哪两个阶段？"></a>原型方法分为哪两个阶段？</h5><ol>
+<li>原型开发阶段。</li>
+</ol>
+<p>软件开发人员根据用户提出的软件系统的定义，快速地开发一个原型。该原型应该包含目标系统的关键问题和反应目标系统的大致面貌，展示目标系统的全部或部分功能、性能等。</p>
+<p>可以考虑以下3种途径：</p>
+<ul>
+<li>利用模拟软件系统的人机界面</li>
+<li>真正开发一个原型</li>
+<li>找来一个或几个正在运行的类似的软件进行比较</li>
+</ul>
+<ol start="2">
+<li>目标软件开发阶段。</li>
+</ol>
+<p>在征求用户对原型的意见后对原型进行修改完善，确认软件系统的需求并达到一致的理解，进一步开发实际系统。</p>
+<h5 id="开发的哪种方法是不同项目，采用不同策略？"><a href="#开发的哪种方法是不同项目，采用不同策略？" class="headerlink" title="开发的哪种方法是不同项目，采用不同策略？"></a>开发的哪种方法是不同项目，采用不同策略？</h5><p>敏捷开发方法，其中水晶方法认为每个不同的项目都有一套不同的策略、约定和方法论。</p>
+<h5 id="指模块内执行若干个逻辑上相似的功能，通过参数确定该模块完成哪一个功能，是属于哪一种内聚？"><a href="#指模块内执行若干个逻辑上相似的功能，通过参数确定该模块完成哪一个功能，是属于哪一种内聚？" class="headerlink" title="指模块内执行若干个逻辑上相似的功能，通过参数确定该模块完成哪一个功能，是属于哪一种内聚？"></a>指模块内执行若干个逻辑上相似的功能，通过参数确定该模块完成哪一个功能，是属于哪一种内聚？</h5><p>逻辑内聚</p>
+<p>模块的内聚从低到高排序</p>
+<table>
+<thead>
+<tr>
+<th>内聚类型</th>
+<th style="text-align:right">描述</th>
+<th style="text-align:center">举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>偶然内聚</td>
+<td style="text-align:right">指一个模块内的各处理元素之间<strong>没有任何联系</strong>，完全是通过上级模块的控制和调用来实现的</td>
+<td style="text-align:center">比如某函数内把一堆不相关的操作都放了进来</td>
+</tr>
+<tr>
+<td>逻辑内聚</td>
+<td style="text-align:right">指模块内执行若干个<strong>逻辑上相似</strong>的功能，通过参数确定该模块完成哪一个功能</td>
+<td style="text-align:center">比如某加法函数内，A、B、C三个代码块分别代表int、float、double的加法。这些代码块之所以聚在一起，只是它们都是为了完成加法运算而已</td>
+</tr>
+<tr>
+<td>时间内聚</td>
+<td style="text-align:right">指把需要<strong>同时执行</strong>的动作组合在一起形成的模块</td>
+<td style="text-align:center">比如某函数内A、B、C三个代码块需要保证原子性，三者执行不容分割。</td>
+</tr>
+<tr>
+<td>过程内聚</td>
+<td style="text-align:right">指一个模块完成多个任务，这些任务必须按照<strong>指定的过程执行</strong></td>
+<td style="text-align:center">比如某数据库操作函数，需要先连接JDBC获得connection对象，然后才能创建Statement对象，最后才能执行sql语句</td>
+</tr>
+<tr>
+<td>通信内聚</td>
+<td style="text-align:right">指模块内的所有处理元素都在<strong>同一个数据结构</strong>上操作，或者各处理使用相同的输入数据或者产生相同的输出数据</td>
+<td style="text-align:center">比如某函数内A、B、C三个代码块，都会对同一个全局变量来进行操作和更新</td>
+</tr>
+<tr>
+<td>顺序内聚</td>
+<td style="text-align:right">指一个模块中的各个处理元素都密切相关于同一功能且<strong>必须顺序执行</strong>，前一功能元素的输出就是下一功能元素的输入</td>
+<td style="text-align:center">比如某函数内的A、B、C三个代码块顺序固定，A的输出是B的输入，B的输出是C的输入</td>
+</tr>
+<tr>
+<td>功能内聚</td>
+<td style="text-align:right">指模块内的所有元素共同作用<strong>完成一个功能</strong>， 缺一不可</td>
+<td style="text-align:center">比如某排序函数内，包含的所有代码不能缺少任意一行代码，否则整个排序功能失效</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+      
+  <div class="popular-posts-header">推荐文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/15/架构之六/" rel="bookmark">架构之六</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/13/架构之五/" rel="bookmark">架构之五</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/07/架构之三/" rel="bookmark">架构之三</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/03/架构之一/" rel="bookmark">架构之一</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/03/架构之二/" rel="bookmark">架构之二</a></div>
+      
+    </li>
+  
+  </ul>
+
+    
+
+    <div>
+      
+        
+  <div id="end-share">
+        <div id="eof" class="print-invisible">
+            <hr class="eof">
+            <div class="word">发现镓</div>
+        </div>
+        <style type="text/css">
+           .word {
+              position: relative;
+              text-align: center;
+              top: -25px;
+              width: 100%;
+           }
+            hr.eof {
+              text-align: center;
+              border: 0;
+              height: 1px;
+              background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              margin: 40px 0px 10px 0;
+            }
+            hr.eof:after {
+              content: '_';
+              display: inline-block;
+              position: relative;
+              top: -13px;
+              padding: 0 25px;
+              background: #fff;
+              color: #8c8b8b;
+            }
+        </style>
+        <div align="center">
+            <p><a href="http://www.fancyga.com/2023/08/10/架构之四/">本文章</a>由<a href="http://www.fancyga.com">发现镓</a>制作，转载请注明出处</p>
+        </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/架构/" rel="tag"><i class="menu-item-icon fa fa-tags fa-fw"></i> 架构</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/08/13/架构之五/" rel="next" title="架构之五">
+                <i class="fa fa-chevron-left"></i> 架构之五
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/08/07/架构之三/" rel="prev" title="架构之三">
+                架构之三 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="waline"></div>
+      <script type="module">
+        import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+        init({
+          el: '#waline',
+          lang: 'zh-CN',
+          serverURL: 'https://waline.fancyga.com',
+        });
+      </script>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="发现镓">
+          <p class="site-author-name" itemprop="name">发现镓</p>
+          <p class="site-description motion-element" itemprop="description">fancyga ≈ 发现镓</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">288</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">311</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/AfirSraftGarrier" target="_blank" title="GitHub" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1940794292" target="_blank" title="Weibo" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/afirsraftgarrier-29" target="_blank" title="ZhiHu" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://blog.csdn.net/AfirSraftGarrier" target="_blank" title="CSDN" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank" rel="external nofollow">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=KfzQR1RfxJNVFk79QPaTuMGLxLPPyhkzlbySVmQ8LjE"></script>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#数据库的三级模式是哪三级？"><span class="nav-number">1.</span> <span class="nav-text">数据库的三级模式是哪三级？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在数据库的体系结构中，什么模式体现了全体数据的逻辑结构和特征，是所有用户的公共数据视图？"><span class="nav-number">2.</span> <span class="nav-text">在数据库的体系结构中，什么模式体现了全体数据的逻辑结构和特征，是所有用户的公共数据视图？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在数据库设计的需求分析阶段应完成包括（）在内的文档。"><span class="nav-number">3.</span> <span class="nav-text">在数据库设计的需求分析阶段应完成包括（）在内的文档。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RUP的特点是什么？"><span class="nav-number">4.</span> <span class="nav-text">RUP的特点是什么？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RUP分为哪几个阶段，每个阶段的主要任务是什么？"><span class="nav-number">5.</span> <span class="nav-text">RUP分为哪几个阶段，每个阶段的主要任务是什么？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原型方法分为哪两个阶段？"><span class="nav-number">6.</span> <span class="nav-text">原型方法分为哪两个阶段？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#开发的哪种方法是不同项目，采用不同策略？"><span class="nav-number">7.</span> <span class="nav-text">开发的哪种方法是不同项目，采用不同策略？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#指模块内执行若干个逻辑上相似的功能，通过参数确定该模块完成哪一个功能，是属于哪一种内聚？"><span class="nav-number">8.</span> <span class="nav-text">指模块内执行若干个逻辑上相似的功能，通过参数确定该模块完成哪一个功能，是属于哪一种内聚？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">发现镓</span>
+</div>
+
+<div class="copyright">
+  <span>HEXO-NEXT&nbsp; | &nbsp;粤ICP备14100221号</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-area-chart"></i>
+  </span>
+  <span class="post-meta-item-text">站点总字数：</span>
+  
+  <span title="站点总字数">230k</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+  </span>
+    <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+  
+  <span title="站点阅读时长">3:29</span>
+
+</div>
+
+<div class="copyright">
+  
+
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+
+</div>
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/cdn/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.loli.net/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+  
+
+  
+<script type="text/javascript" async src="//zz.bdstatic.com/linksubmit/push.js">
+</script>
+
+
+  
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+</body>
+</html>

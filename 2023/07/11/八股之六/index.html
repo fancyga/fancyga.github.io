@@ -1,0 +1,981 @@
+<!doctype html>
+
+
+  
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>八股之六-发现镓</title>
+  
+  <meta name="keywords" content="八股文,">
+
+<meta name="description" content="什么是数仓数据仓库全程为Data Warehouse，简称DW。它是面向主题的，集成的，相对稳定的，反应历史变化的数据存储集合，用于支撑企业的分析报告与决策。 binLog的格式是怎样的？binLog有三种格式：  Statement（Statement-Based Replication,SBR）：每一条会修改数据的SQL都会记录在binlog中。（由于存在函数如uuid，这样每次执行会不一样，">
+<meta name="keywords" content="八股文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="八股之六">
+<meta property="og:url" content="http://www.fancyga.com/2023/07/11/八股之六/index.html">
+<meta property="og:site_name" content="发现镓">
+<meta property="og:description" content="什么是数仓数据仓库全程为Data Warehouse，简称DW。它是面向主题的，集成的，相对稳定的，反应历史变化的数据存储集合，用于支撑企业的分析报告与决策。 binLog的格式是怎样的？binLog有三种格式：  Statement（Statement-Based Replication,SBR）：每一条会修改数据的SQL都会记录在binlog中。（由于存在函数如uuid，这样每次执行会不一样，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2023-07-11T14:19:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="八股之六">
+<meta name="twitter:description" content="什么是数仓数据仓库全程为Data Warehouse，简称DW。它是面向主题的，集成的，相对稳定的，反应历史变化的数据存储集合，用于支撑企业的分析报告与决策。 binLog的格式是怎样的？binLog有三种格式：  Statement（Statement-Based Replication,SBR）：每一条会修改数据的SQL都会记录在binlog中。（由于存在函数如uuid，这样每次执行会不一样，">
+
+
+  <link rel="canonical" href="http://www.fancyga.com/2023/07/11/八股之六/">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+  <meta name="baidu-site-verification" content="wAcdUCCSr1">
+
+
+
+  
+  
+    
+  
+  <link href="/cdn/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="/cdn/pace-theme-minimal.css">
+  <script src="/cdn/pace.min.js"></script>
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+<link href="/cdn/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="alternate" href="/atom.xml" title="发现镓" type="application/atom+xml">
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.1.0">
+
+
+  <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: undefined,
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'BCDXWW18MV',
+      apiKey: '156dd69e5ea1334037799ce473064e07',
+      indexName: 'fancyga',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"搜索...","hits_empty":"未找到匹配结果: ${query}","hits_stats":"找到${hits} 条查询结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?4b3f4eeb2a5ddee114ae31fe440b904b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+  
+  
+    
+  
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">发现镓</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">fancyga ≈ 发现镓</p>
+</div>
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+<nav class="site-nav">
+  
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-top">
+          <a href="/top" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-signal"></i> <br>
+            
+            热榜
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-one">
+          <a href="/one" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            一句
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-timeline">
+          <a href="/timeline" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-road"></i> <br>
+            
+            时线
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <div class="moon-menu">
+  <div class="moon-menu-items">
+
+      <div class="moon-menu-item" id="moon-menu-item-back2bottom">
+        <i class="fa fa-chevron-down"></i>
+      </div>
+
+      <div class="moon-menu-item" id="moon-menu-item-back2top">
+        <i class="fa fa-chevron-up"></i>
+      </div>
+
+  </div>
+
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"/>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"/>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon">
+        <i class="fa fa-ellipsis-v"></i>
+      </div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                八股之六
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time title="创建于" itemprop="dateCreated" datetime="2023-07-11T22:19:00+08:00">
+              2023-07-11
+            </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/八股文/" itemprop="url" rel="index">
+                    <span itemprop="name">八股文</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2023/07/11/八股之六/" class="leancloud_visitors" data-flag-title="八股之六">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span id="busuanzi_value_page_pv"></span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+          
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.4k</span>
+            </span>
+          
+          &nbsp; | &nbsp;
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>2 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="什么是数仓"><a href="#什么是数仓" class="headerlink" title="什么是数仓"></a>什么是数仓</h3><p>数据仓库全程为Data Warehouse，简称DW。它是面向主题的，集成的，相对稳定的，反应<strong>历史</strong>变化的数据存储集合，用于支撑企业的分析<strong>报告</strong>与决策。</p>
+<h3 id="binLog的格式是怎样的？"><a href="#binLog的格式是怎样的？" class="headerlink" title="binLog的格式是怎样的？"></a>binLog的格式是怎样的？</h3><p>binLog有三种格式：</p>
+<ul>
+<li>Statement（Statement-Based Replication,SBR）：每一条会修改数据的SQL都会记录在binlog中。（由于存在函数如uuid，这样每次执行会不一样，所以会出现一致性问题）</li>
+<li>Row（Row-Based Replication,RBR）：不记录SQL语句上下文信息，仅保存哪条记录被修改。（避免Statement问题，但在批量修改时，显然这种日志会比较大）</li>
+<li>Mixed（Mixed-Based Replication,MBR）：Statement和Row的混合体。</li>
+</ul>
+<h3 id="MVCC主要解决那种情况下的并发？写写并发如何解决？"><a href="#MVCC主要解决那种情况下的并发？写写并发如何解决？" class="headerlink" title="MVCC主要解决那种情况下的并发？写写并发如何解决？"></a>MVCC主要解决那种情况下的并发？写写并发如何解决？</h3><h3 id="最左前缀匹配原则是什么？为什么要遵守这个原则？"><a href="#最左前缀匹配原则是什么？为什么要遵守这个原则？" class="headerlink" title="最左前缀匹配原则是什么？为什么要遵守这个原则？"></a>最左前缀匹配原则是什么？为什么要遵守这个原则？</h3><h3 id="联合索引构造出来的B-树长什么样子？"><a href="#联合索引构造出来的B-树长什么样子？" class="headerlink" title="联合索引构造出来的B+树长什么样子？"></a>联合索引构造出来的B+树长什么样子？</h3><h4 id="a-b-c联合索引，用b-c查询，一定不会走索引吗？不用a查询也能覆盖吗？"><a href="#a-b-c联合索引，用b-c查询，一定不会走索引吗？不用a查询也能覆盖吗？" class="headerlink" title="a,b,c联合索引，用b,c查询，一定不会走索引吗？不用a查询也能覆盖吗？"></a>a,b,c联合索引，用b,c查询，一定不会走索引吗？不用a查询也能覆盖吗？</h4><h3 id="a-b联合索引，如何索引覆盖。Select-b-from-table-where-a-xxx，走覆盖吗？Select-a-from-table-where-b-xxx，走覆盖吗？"><a href="#a-b联合索引，如何索引覆盖。Select-b-from-table-where-a-xxx，走覆盖吗？Select-a-from-table-where-b-xxx，走覆盖吗？" class="headerlink" title="a,b联合索引，如何索引覆盖。Select b from table where a = xxx，走覆盖吗？Select a from table where b = xxx，走覆盖吗？"></a>a,b联合索引，如何索引覆盖。Select b from table where a = xxx，走覆盖吗？Select a from table where b = xxx，走覆盖吗？</h3><p>不绝对！考虑mysql8.0索引跳跃扫描情况。</p>
+<h3 id="什么情况会导致索引失效？"><a href="#什么情况会导致索引失效？" class="headerlink" title="什么情况会导致索引失效？"></a>什么情况会导致索引失效？</h3><ul>
+<li>不满足最左前缀匹配原则</li>
+</ul>
+<h3 id="求无重复字符的最长子串：”abcabcbb”？"><a href="#求无重复字符的最长子串：”abcabcbb”？" class="headerlink" title="求无重复字符的最长子串：”abcabcbb”？"></a>求无重复字符的最长子串：”abcabcbb”？</h3><a id="more"></a>
+<p>思路：</p>
+<p>这种问题一般用双指针方法求解，即子串有个开始位置和结束位置，用两个指针标志位置。</p>
+<p>就是求最长子串，那就穷举喽，子串肯定有个开始位置和结束位置，我们穷举子串的开始位置，这个就是暴力求解法，用C++实现如下：</p>
+<figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unordered_set&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> str)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 哈希集合，记录每个字符是否出现过</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; occ;</span><br><span class="line">        <span class="keyword">int</span> n = str.<span class="built_in">size</span>();</span><br><span class="line">        <span class="comment">// 右指针，初始值为 -1，相当于我们在字符串的左边界的左侧，还没有开始移动</span></span><br><span class="line">        <span class="keyword">int</span> rk = <span class="number">-1</span>;</span><br><span class="line">        <span class="comment">// 答案</span></span><br><span class="line">        <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 枚举左指针的位置，初始值隐性地表示为 -1</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 把上次开始位置字符删了</span></span><br><span class="line">                occ.erase(str[i - <span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 不断地移动右指针，直到找到重复</span></span><br><span class="line">            <span class="keyword">while</span> (rk + <span class="number">1</span> &lt; n &amp;&amp; !occ.count(str[rk + <span class="number">1</span>])) &#123;</span><br><span class="line">                occ.insert(str[rk + <span class="number">1</span>]);</span><br><span class="line">                ++rk;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 第i到rk个字符是一个极长的无重复字符子串</span></span><br><span class="line">            ans = fmax(ans, rk - i + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Solution solution;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> str = <span class="string">"abcabcbb"</span>;</span><br><span class="line">    <span class="keyword">int</span> result = solution.lengthOfLongestSubstring(str);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Length of longest substring without repeating characters: "</span> &lt;&lt; result &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<p>这里用<code>unordered_set</code>是因为该数据结构能够在$O(1)$时间查到是否有某元素。</p>
+<p>其实这里就是遍历子串开始位置，然后右指针不断扩张，扩到不能再扩，求得当前开始位置下的最长子串，通过遍历全部，得到整体最长子串。</p>
+<p>此算法属于暴力求解，当然还有优化空间，就是<strong>开始位置</strong>不用每个位置都要去到：</p>
+<ol>
+<li>当发现重复之后，其实开始位置可以直接定位到<strong>已有元素中重复元素的下一位</strong>（因为前面一直到重复位，有指针都不能再增加）。</li>
+<li>当发现最大长度大于从<strong>已有元素中重复元素的下一位</strong>到结束的长度，就可以直接返回（因为后面不管怎么变都不会超过这个长度了）。</li>
+</ol>
+<p>这种就是所谓的滑动窗口方法，滑动窗口可以用以解决数组/字符串的子元素相关问题，并且可以将嵌套的循环问题，转换为单循环问题，从而降低时间复杂度。</p>
+<p>滑动窗口算法的复杂度一般为$O(n)$。上面的暴力求解法显然要经过两个循环，如上一个for一个while，复杂度为$(O(n^2))。</p>
+<p>其实可以换个思路，可以不断向右扩展右指针，然后左指针发现重复后，向右滑动到重复的地方，这个就可以满足上面的优化条目1，</p>
+<p>具体解法如下：</p>
+<figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.empty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> maxLen = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> len = s.<span class="built_in">size</span>();</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; uniCharMap;</span><br><span class="line">    <span class="comment">// 左指针</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len; ++j) &#123;</span><br><span class="line">        <span class="comment">// 重复后，比较最大值，可能左指针向右移动到之前记录的位置</span></span><br><span class="line">        <span class="keyword">if</span> (uniCharMap.<span class="built_in">find</span>(s[j]) != uniCharMap.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            i = <span class="built_in">std</span>::<span class="built_in">max</span>(uniCharMap[s[j]], i);</span><br><span class="line">        &#125;</span><br><span class="line">        maxLen = <span class="built_in">std</span>::<span class="built_in">max</span>(maxLen, j - i + <span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 优化点2，后面的子串肯定超过不了当前最大值，不必再看</span></span><br><span class="line">        <span class="keyword">if</span> (len - i + <span class="number">1</span> &lt; maxLen) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 记录当前对应的下一个位置</span></span><br><span class="line">        uniCharMap[s[j]] = j + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxLen;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+      
+  <div class="popular-posts-header">推荐文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/07/14/八股之十/" rel="bookmark">八股之十</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/07/14/八股之九/" rel="bookmark">八股之九</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/07/13/八股之八/" rel="bookmark">八股之八</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/07/06/八股之一/" rel="bookmark">八股之一</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/07/12/八股之七/" rel="bookmark">八股之七</a></div>
+      
+    </li>
+  
+  </ul>
+
+    
+
+    <div>
+      
+        
+  <div id="end-share">
+        <div id="eof" class="print-invisible">
+            <hr class="eof">
+            <div class="word">发现镓</div>
+        </div>
+        <style type="text/css">
+           .word {
+              position: relative;
+              text-align: center;
+              top: -25px;
+              width: 100%;
+           }
+            hr.eof {
+              text-align: center;
+              border: 0;
+              height: 1px;
+              background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              margin: 40px 0px 10px 0;
+            }
+            hr.eof:after {
+              content: '_';
+              display: inline-block;
+              position: relative;
+              top: -13px;
+              padding: 0 25px;
+              background: #fff;
+              color: #8c8b8b;
+            }
+        </style>
+        <div align="center">
+            <p><a href="http://www.fancyga.com/2023/07/11/八股之六/">本文章</a>由<a href="http://www.fancyga.com">发现镓</a>制作，转载请注明出处</p>
+        </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/八股文/" rel="tag"><i class="menu-item-icon fa fa-tags fa-fw"></i> 八股文</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/07/12/每日札记-202300712-话说半吊子/" rel="next" title="每日札记-202300712-话说半吊子">
+                <i class="fa fa-chevron-left"></i> 每日札记-202300712-话说半吊子
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/07/11/每日札记-202300711-生活节奏/" rel="prev" title="每日札记-202300711-生活节奏">
+                每日札记-202300711-生活节奏 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="waline"></div>
+      <script type="module">
+        import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+        init({
+          el: '#waline',
+          lang: 'zh-CN',
+          serverURL: 'https://waline.fancyga.com',
+        });
+      </script>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="发现镓">
+          <p class="site-author-name" itemprop="name">发现镓</p>
+          <p class="site-description motion-element" itemprop="description">fancyga ≈ 发现镓</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">288</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">311</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/AfirSraftGarrier" target="_blank" title="GitHub" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1940794292" target="_blank" title="Weibo" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/afirsraftgarrier-29" target="_blank" title="ZhiHu" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://blog.csdn.net/AfirSraftGarrier" target="_blank" title="CSDN" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank" rel="external nofollow">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=KfzQR1RfxJNVFk79QPaTuMGLxLPPyhkzlbySVmQ8LjE"></script>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是数仓"><span class="nav-number">1.</span> <span class="nav-text">什么是数仓</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#binLog的格式是怎样的？"><span class="nav-number">2.</span> <span class="nav-text">binLog的格式是怎样的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC主要解决那种情况下的并发？写写并发如何解决？"><span class="nav-number">3.</span> <span class="nav-text">MVCC主要解决那种情况下的并发？写写并发如何解决？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最左前缀匹配原则是什么？为什么要遵守这个原则？"><span class="nav-number">4.</span> <span class="nav-text">最左前缀匹配原则是什么？为什么要遵守这个原则？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联合索引构造出来的B-树长什么样子？"><span class="nav-number">5.</span> <span class="nav-text">联合索引构造出来的B+树长什么样子？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-b-c联合索引，用b-c查询，一定不会走索引吗？不用a查询也能覆盖吗？"><span class="nav-number">5.1.</span> <span class="nav-text">a,b,c联合索引，用b,c查询，一定不会走索引吗？不用a查询也能覆盖吗？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-b联合索引，如何索引覆盖。Select-b-from-table-where-a-xxx，走覆盖吗？Select-a-from-table-where-b-xxx，走覆盖吗？"><span class="nav-number">6.</span> <span class="nav-text">a,b联合索引，如何索引覆盖。Select b from table where a = xxx，走覆盖吗？Select a from table where b = xxx，走覆盖吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么情况会导致索引失效？"><span class="nav-number">7.</span> <span class="nav-text">什么情况会导致索引失效？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#求无重复字符的最长子串：”abcabcbb”？"><span class="nav-number">8.</span> <span class="nav-text">求无重复字符的最长子串：”abcabcbb”？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">发现镓</span>
+</div>
+
+<div class="copyright">
+  <span>HEXO-NEXT&nbsp; | &nbsp;粤ICP备14100221号</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-area-chart"></i>
+  </span>
+  <span class="post-meta-item-text">站点总字数：</span>
+  
+  <span title="站点总字数">230k</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+  </span>
+    <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+  
+  <span title="站点阅读时长">3:29</span>
+
+</div>
+
+<div class="copyright">
+  
+
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+
+</div>
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/cdn/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.loli.net/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+  
+
+  
+<script type="text/javascript" async src="//zz.bdstatic.com/linksubmit/push.js">
+</script>
+
+
+  
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+</body>
+</html>

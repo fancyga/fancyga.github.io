@@ -1,0 +1,1028 @@
+<!doctype html>
+
+
+  
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>架构之五-发现镓</title>
+  
+  <meta name="keywords" content="架构,">
+
+<meta name="description" content="2022年案例和论文题">
+<meta name="keywords" content="架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构之五">
+<meta property="og:url" content="http://www.fancyga.com/2023/08/13/架构之五/index.html">
+<meta property="og:site_name" content="发现镓">
+<meta property="og:description" content="2022年案例和论文题">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/54fbb2fb43166d2225fdc876d3d558fb9252d249.jpeg">
+<meta property="og:image" content="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/f2deb48f8c5494eee764adc4b803b1f29b257eaf.webp">
+<meta property="og:image" content="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/c83d70cf3bc79f3dab57595e2f579c1d738b2928.webp">
+<meta property="og:updated_time" content="2023-08-13T09:29:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="架构之五">
+<meta name="twitter:description" content="2022年案例和论文题">
+<meta name="twitter:image" content="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/54fbb2fb43166d2225fdc876d3d558fb9252d249.jpeg">
+
+
+  <link rel="canonical" href="http://www.fancyga.com/2023/08/13/架构之五/">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+  <meta name="baidu-site-verification" content="wAcdUCCSr1">
+
+
+
+  
+  
+    
+  
+  <link href="/cdn/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="/cdn/pace-theme-minimal.css">
+  <script src="/cdn/pace.min.js"></script>
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+<link href="/cdn/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="alternate" href="/atom.xml" title="发现镓" type="application/atom+xml">
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.1.0">
+
+
+  <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: undefined,
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'BCDXWW18MV',
+      apiKey: '156dd69e5ea1334037799ce473064e07',
+      indexName: 'fancyga',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"搜索...","hits_empty":"未找到匹配结果: ${query}","hits_stats":"找到${hits} 条查询结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?4b3f4eeb2a5ddee114ae31fe440b904b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+  
+  
+    
+  
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">发现镓</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">fancyga ≈ 发现镓</p>
+</div>
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+<nav class="site-nav">
+  
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-top">
+          <a href="/top" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-signal"></i> <br>
+            
+            热榜
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-one">
+          <a href="/one" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            一句
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-timeline">
+          <a href="/timeline" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-road"></i> <br>
+            
+            时线
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <div class="moon-menu">
+  <div class="moon-menu-items">
+
+      <div class="moon-menu-item" id="moon-menu-item-back2bottom">
+        <i class="fa fa-chevron-down"></i>
+      </div>
+
+      <div class="moon-menu-item" id="moon-menu-item-back2top">
+        <i class="fa fa-chevron-up"></i>
+      </div>
+
+  </div>
+
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"/>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"/>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon">
+        <i class="fa fa-ellipsis-v"></i>
+      </div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                架构之五
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time title="创建于" itemprop="dateCreated" datetime="2023-08-13T17:29:00+08:00">
+              2023-08-13
+            </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/架构/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2023/08/13/架构之五/" class="leancloud_visitors" data-flag-title="架构之五">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span id="busuanzi_value_page_pv"></span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+          
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.3k</span>
+            </span>
+          
+          &nbsp; | &nbsp;
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>3 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="2022年案例和论文题"><a href="#2022年案例和论文题" class="headerlink" title="2022年案例和论文题"></a>2022年案例和论文题</h2><a id="more"></a>
+<h3 id="案例题"><a href="#案例题" class="headerlink" title="案例题"></a>案例题</h3><h4 id="试题一（必答）"><a href="#试题一（必答）" class="headerlink" title="试题一（必答）"></a>试题一（必答）</h4><p>阅读以下关于软件架构设计与评估的叙述，在答题纸上回答问题1和问题2。</p>
+<p>【说明】</p>
+<p>某电子商务公司拟升级其会员与促销管理系统，向用户提供个性化服务，提高用户的粘性。<br>在项目立项之初，公司领导层一致认为本次升级的主要目标是提升会员管理方式的灵活性，由于当前用户规模不大，业务也相对简单，系统性能方面不做过多考虑。<br>新系统除了保持现有的四级固定会员制度外，还需要根据用户的消费金额、偏好、重复性等相关特征动态调整商品的折扣力度，并支持在特定的活动周期内主动筛选与活动主题高度相关的用户集合，提供个性化的打折促销活动。</p>
+<p>在需求分析与架构设计阶段，公司提出的需求和质量属性描述如下：</p>
+<p>（a）管理员能够在页面上灵活设置折扣力度规则和促销活动逻辑，设置后即可生效；</p>
+<p>（b）系统应该具备完整的安全防护措施，支持对恶意行为进行检测与报警；</p>
+<p>（c）在正常负载情况下，系统应在0.3秒内对用户的界面操作请求进行响应；</p>
+<p>（d）用户名是系统唯一标识，要求以字母开头，由数字和字母组合而成，长度不少于6个字符；</p>
+<p>（e）在正常负载情况下，用户支付商品费用后在3秒内确认订单支付信息；</p>
+<p>（f）系统主站点电力中断后，应在5秒内将请求重定向到备用站点；</p>
+<p>（g）系统支持横向存储扩展，要求在2人天内完成所有的扩展与测试工作；</p>
+<p>（h）系统宕机后，需要在10秒内感知错误，并自动启动热备份系统；</p>
+<p>（i）系统需要内置接口函数，支持开发团队进行功能调试与系统诊断；</p>
+<p>（j）系统需要为所有的用户操作行为进行详细记录，便于后期查阅与审计；</p>
+<p>（k）支持对系统的外观进行调整和配置，调整工作需要在4人天内完成。</p>
+<p>在对系统需求、质量属性描述和架构特性进行分析础上，系统架构师给出了两种候选的架构设计方案，公司目前正在组织相关专家对系统架构进行评估。</p>
+<p>【问题1】（12分）</p>
+<p>在架构评估过程中，质量属性效用树（utility tree）是对系统质量属性进行识别和优先级排序的重要工具。<br>请将合适的质量属性名称填入图1-1中（1）、（2）白处，并选择题干描述的（a）～（k）填入（3）～（6）空白处，完成该系统的效用树。</p>
+<img src="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/54fbb2fb43166d2225fdc876d3d558fb9252d249.jpeg" class="full-image">
+<p>【答】</p>
+<ol>
+<li>安全性、可修改性</li>
+<li>e、j、h、k</li>
+</ol>
+<p>【问题2】（13分）</p>
+<p>针对该系统的功能，李工建议采用面向对象的架构风格，将折扣力度计算和用户筛选分别封装为独立对象，通过对象调用实现对应的功能；<br>王工则建议采用解释器（interpreters）架构风格，将折扣力度计算用户筛选条件封装为独立的规则，通过解释规则实现对应的功能。<br>请针对系统的主要功能，从折扣规则可修改性、个性化折扣定义灵活性和系统性能三个方面对这两种架构风格进行比较与分析，并指出该系更适合采用哪种架构风格。</p>
+<p>【答】</p>
+<p>对于可修改性，</p>
+<h4 id="试题二（四选二之一）"><a href="#试题二（四选二之一）" class="headerlink" title="试题二（四选二之一）"></a>试题二（四选二之一）</h4><p>【说明】</p>
+<p>煤炭生产是国民经济发展的主要领域之一，其煤矿的安全非常重要。某能源企业拟开发一套煤矿建设项目安全预警系统，以保护煤矿建设项目从业人员生命安全。本系统的主要功能包括如下（a）～（h）所述。</p>
+<p>（a）项目信息维护</p>
+<p>（b）影响因素录入</p>
+<p>（c）关联事故录入</p>
+<p>（d）安全评价得分</p>
+<p>（e）项目指标预警分析</p>
+<p>（f）项目指标填报</p>
+<p>（g）项目指标审核</p>
+<p>（h）项目指标确认</p>
+<p>【问题1】（9分）</p>
+<p>王工根据煤矿建设项目安全预警系统的功能设计完成了系统的数据流图，如图2-1所示。请使用题干中描述的功能（a）～（h），补充完善空（1）～（6）处的内容，并简要介绍数据流图在分层细化过程中遵循的数据平衡原则。</p>
+<p>【问题2】（9分）</p>
+<p>请根据【问题1】中数据流图表示的相关信息，补充完善煤矿建设项目安全预警系统总体E-R图（见图2-2）中实体（1）～（6）的具体内容，将正确答案填在答题纸上。</p>
+<p>【问题3】</p>
+<p>数据流图分析阶段：建立系统的功能模型，从而完成需求分析。</p>
+<p>数据流图设计阶段：为模块划分与模块之间接口设计提供依据。</p>
+<p>数据字典在分析与设计阶段的作用为：</p>
+<p>是所有人员工作的依据，统一的标准。它可以确保数据在系统中的完整性和一致性。</p>
+<p>具体作用包括：按各种要求列表、相互参照、由描述内容检索名称、一致性检验和完整性检验。</p>
+<h4 id="试题四（四选二之一）"><a href="#试题四（四选二之一）" class="headerlink" title="试题四（四选二之一）"></a>试题四（四选二之一）</h4><p>【说明】</p>
+<p>某大型电商平台建立了一个在线B2B商店系统，并在全国多地建设了货物仓储中心，通过提前备货的方式来提高货物的运送效率。但是在运营过程中，发现会出现很多跨仓储中心调货从而延误货物运送的情况。为此，该企业计划新建立一个全国仓储货物管理系统，在实现仓储中心常规管理功能之外，通过对在线B2B商店系统中订单信息进行及时的分析和挖掘，并通过大数据分析预测各地仓储中心中各类货物的配置数量，从而提高运送效率，降低成本。</p>
+<p>当用户通过在线B2B商店系统选购货物时，全国仓储货物管理系统会通过该用户所在地址、商品类别以及仓储中心的货物信息和地址，实时为用户订单反馈货物起运地（某仓储中心）并预测送达时间。反馈送达时间的响应时间应小于1秒。</p>
+<p>为满足反馈送达时间功能的性能要求，设计团队建议在全国仓储货物管理系统中采用数据缓存集群的方式，将仓储中心基本信息、商品类别以及库存数量放置在内存的缓存中，而仓储中心的其它商品信息则存储在数据库系统。</p>
+<p>【问题1】（9分）</p>
+<p>设计团队在讨论缓存和数据库的数据一致性问题时，李工建议采取数据实时同步更新方案，而张工则建议采用数据异步准实时更新方案。</p>
+<p>请用200字以内的文字，简要介绍两种方案的基本思路，说明全国仓储货物管理系统应该采用哪种方案，并说明采取该方案的原因。</p>
+<p>【问题2】（9分）</p>
+<p>随着业务的发展，仓储中心以及商品的数量日益增加，需要对集群部署多个缓存节点，提高缓存的处理能力。李工建议采用缓存分片方法，把缓存的数据拆分到多个节点分别存储，减轻单个缓存节点的访问压力，达到分流效果。</p>
+<p>缓存分片方法常用的有哈希算法和一致性哈希算法，李工建议采用一致性哈希算法来进行分片。请用200字以内的文字简要说明两种算法的基本原理，并说明李工采用一致性哈希算法的原因。</p>
+<p>【问题3】（7分）</p>
+<p>全国仓储货物管理系统开发完成，在运营一段时间后，系统维护人员发现大量黑客故意发起非法的商品送达时间查询请求，造成了缓存击穿。张工建议尽快采用布隆过滤器方法解决。请用200字以内的文字解释布隆过滤器的工作原理和优缺点。</p>
+<h4 id="试题五（四选二之一）"><a href="#试题五（四选二之一）" class="headerlink" title="试题五（四选二之一）"></a>试题五（四选二之一）</h4><p>某公司拟开发一套基于边缘计算的智能门禁系统，用于如园区、新零售、工业现场等存在来访、被访业务的场景。来访者在来访前，可以通过线上提前预约的方式将自己的个人信息记录在后台，被访者在系统中通过此请求后，来访者在到访时可以直接通过”刷脸”<br>的方式通过门禁，无需做其他验证。此外，系统的管理员可对正在运行的门禁设备进行管理。</p>
+<p>基于项目需求，该公司组建项目组，召开了项目讨论会。会上，张工根据业务需求并结合边缘计算的思想，提出本系统可由访客注册模块、模型训练模块、端侧识别模块与设备调度平台模块等四项功能组成。李工从技术层面提出该系统可厂使用Flask框架与SSM框架为基础来开发后台服务器，将开发好的系统通过Docker进行部署，并使用MQTT协议对Docker进行管理。</p>
+<p>【问题1】(5分)</p>
+<p>MQTT协议在工业物联网中得到广泛的应用，请用300字以内的文字简要说明MQTT协议。</p>
+<p>【问题2】 (14分)</p>
+<p>在会议上，张工对功能模块进行了更进一步的说明：访客注册模块用于来访者提交申请与被访者确认申请，主要处理提交来访申请、来访申请审核业务，同时保存访客数据，为训练模块准备训练数据集；模型训练模块用于使用访客数据进行模型训练，为端侧设备的识别提供模型基础；端侧识别模块在边缘门禁设备上运行，使用训练好的模型来识别来访人员，与云端服务协作完成访客来访的完整业务；设备调度平台模块用于对边缘门禁设备进行管理，管理人员能够使用平台对边缘设备进行调度管理与状态监控，实现云端协同。</p>
+<p>图5-1给出了基于边缘计算的智能门禁系统架构图，请结合HTTP协议和MQTT协议的特点为图5-1中(1)~(6)处选择合适的协议；并结合张工关于功能模块的描述，补充完善图5-1中(7)~(10)处的空白。</p>
+<p>【问题3】(6分)</p>
+<p>请用300字以内的文字，从数据通信、数据安全和系统性能等方面简要分析在传统云计算模型中引入边缘计算模型的优势。</p>
+<img src="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/f2deb48f8c5494eee764adc4b803b1f29b257eaf.webp" class="full-image">
+<img src="https://images.weserv.nl/?url=https://pics7.baidu.com/feed/c83d70cf3bc79f3dab57595e2f579c1d738b2928.webp" class="full-image">
+      
+    </div>
+      
+  <div class="popular-posts-header">推荐文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/15/架构之六/" rel="bookmark">架构之六</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/10/架构之四/" rel="bookmark">架构之四</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/07/架构之三/" rel="bookmark">架构之三</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/03/架构之一/" rel="bookmark">架构之一</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2023/08/03/架构之二/" rel="bookmark">架构之二</a></div>
+      
+    </li>
+  
+  </ul>
+
+    
+
+    <div>
+      
+        
+  <div id="end-share">
+        <div id="eof" class="print-invisible">
+            <hr class="eof">
+            <div class="word">发现镓</div>
+        </div>
+        <style type="text/css">
+           .word {
+              position: relative;
+              text-align: center;
+              top: -25px;
+              width: 100%;
+           }
+            hr.eof {
+              text-align: center;
+              border: 0;
+              height: 1px;
+              background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              margin: 40px 0px 10px 0;
+            }
+            hr.eof:after {
+              content: '_';
+              display: inline-block;
+              position: relative;
+              top: -13px;
+              padding: 0 25px;
+              background: #fff;
+              color: #8c8b8b;
+            }
+        </style>
+        <div align="center">
+            <p><a href="http://www.fancyga.com/2023/08/13/架构之五/">本文章</a>由<a href="http://www.fancyga.com">发现镓</a>制作，转载请注明出处</p>
+        </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/架构/" rel="tag"><i class="menu-item-icon fa fa-tags fa-fw"></i> 架构</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/08/15/架构之六/" rel="next" title="架构之六">
+                <i class="fa fa-chevron-left"></i> 架构之六
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/08/10/架构之四/" rel="prev" title="架构之四">
+                架构之四 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="waline"></div>
+      <script type="module">
+        import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+        init({
+          el: '#waline',
+          lang: 'zh-CN',
+          serverURL: 'https://waline.fancyga.com',
+        });
+      </script>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="发现镓">
+          <p class="site-author-name" itemprop="name">发现镓</p>
+          <p class="site-description motion-element" itemprop="description">fancyga ≈ 发现镓</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">288</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">311</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/AfirSraftGarrier" target="_blank" title="GitHub" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1940794292" target="_blank" title="Weibo" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/afirsraftgarrier-29" target="_blank" title="ZhiHu" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://blog.csdn.net/AfirSraftGarrier" target="_blank" title="CSDN" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank" rel="external nofollow">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=KfzQR1RfxJNVFk79QPaTuMGLxLPPyhkzlbySVmQ8LjE"></script>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2022年案例和论文题"><span class="nav-number">1.</span> <span class="nav-text">2022年案例和论文题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#案例题"><span class="nav-number">1.1.</span> <span class="nav-text">案例题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#试题一（必答）"><span class="nav-number">1.1.1.</span> <span class="nav-text">试题一（必答）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#试题二（四选二之一）"><span class="nav-number">1.1.2.</span> <span class="nav-text">试题二（四选二之一）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#试题四（四选二之一）"><span class="nav-number">1.1.3.</span> <span class="nav-text">试题四（四选二之一）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#试题五（四选二之一）"><span class="nav-number">1.1.4.</span> <span class="nav-text">试题五（四选二之一）</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">发现镓</span>
+</div>
+
+<div class="copyright">
+  <span>HEXO-NEXT&nbsp; | &nbsp;粤ICP备14100221号</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-area-chart"></i>
+  </span>
+  <span class="post-meta-item-text">站点总字数：</span>
+  
+  <span title="站点总字数">230k</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+  </span>
+    <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+  
+  <span title="站点阅读时长">3:29</span>
+
+</div>
+
+<div class="copyright">
+  
+
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+
+</div>
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/cdn/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.loli.net/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+  
+
+  
+<script type="text/javascript" async src="//zz.bdstatic.com/linksubmit/push.js">
+</script>
+
+
+  
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+</body>
+</html>

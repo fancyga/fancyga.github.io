@@ -1,0 +1,957 @@
+<!doctype html>
+
+
+  
+
+<html class="theme-next pisces use-motion">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>如何将ApiDemos嵌入到自己的工程当中-发现镓</title>
+  
+  <meta name="keywords" content="android,">
+
+<meta name="description" content="题目看起来比较简单，考察的却是很多能力，要做好没那么简单。 有许多人，用开源框架用得很六，但很多基本的原理都不知道。很多android API在ApiDemos这个项目里面都已经有例子，里面很多DEMO是值得我们去学习的，但实际是很多人都没有认真去看。现在比较流行用gradle来构建工程，可是找了半天，很难找到ApiDemos的gradle工程，有的也是比较旧的，错误百出。于是自己做了一个，如果">
+<meta name="keywords" content="android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何将ApiDemos嵌入到自己的工程当中">
+<meta property="og:url" content="http://www.fancyga.com/2016/12/01/如何将ApiDemos嵌入到自己的工程当中/index.html">
+<meta property="og:site_name" content="发现镓">
+<meta property="og:description" content="题目看起来比较简单，考察的却是很多能力，要做好没那么简单。 有许多人，用开源框架用得很六，但很多基本的原理都不知道。很多android API在ApiDemos这个项目里面都已经有例子，里面很多DEMO是值得我们去学习的，但实际是很多人都没有认真去看。现在比较流行用gradle来构建工程，可是找了半天，很难找到ApiDemos的gradle工程，有的也是比较旧的，错误百出。于是自己做了一个，如果">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://images.weserv.nl/?url=https://www.fancyga.com/images/apidemos.jpg">
+<meta property="og:updated_time" content="2016-12-01T08:48:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何将ApiDemos嵌入到自己的工程当中">
+<meta name="twitter:description" content="题目看起来比较简单，考察的却是很多能力，要做好没那么简单。 有许多人，用开源框架用得很六，但很多基本的原理都不知道。很多android API在ApiDemos这个项目里面都已经有例子，里面很多DEMO是值得我们去学习的，但实际是很多人都没有认真去看。现在比较流行用gradle来构建工程，可是找了半天，很难找到ApiDemos的gradle工程，有的也是比较旧的，错误百出。于是自己做了一个，如果">
+<meta name="twitter:image" content="https://images.weserv.nl/?url=https://www.fancyga.com/images/apidemos.jpg">
+
+
+  <link rel="canonical" href="http://www.fancyga.com/2016/12/01/如何将ApiDemos嵌入到自己的工程当中/">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+  <meta name="baidu-site-verification" content="wAcdUCCSr1">
+
+
+
+  
+  
+    
+  
+  <link href="/cdn/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="/cdn/pace-theme-minimal.css">
+  <script src="/cdn/pace.min.js"></script>
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+<link href="/cdn/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="alternate" href="/atom.xml" title="发现镓" type="application/atom+xml">
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png?v=5.1.0">
+
+
+  <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: undefined,
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'BCDXWW18MV',
+      apiKey: '156dd69e5ea1334037799ce473064e07',
+      indexName: 'fancyga',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"搜索...","hits_empty":"未找到匹配结果: ${query}","hits_stats":"找到${hits} 条查询结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?4b3f4eeb2a5ddee114ae31fe440b904b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+  
+  
+    
+  
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+  <div class="custom-logo-site-title">
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">发现镓</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">fancyga ≈ 发现镓</p>
+</div>
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+<nav class="site-nav">
+  
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-top">
+          <a href="/top" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-signal"></i> <br>
+            
+            热榜
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-one">
+          <a href="/one" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            一句
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-timeline">
+          <a href="/timeline" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-road"></i> <br>
+            
+            时线
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <div class="moon-menu">
+  <div class="moon-menu-items">
+
+      <div class="moon-menu-item" id="moon-menu-item-back2bottom">
+        <i class="fa fa-chevron-down"></i>
+      </div>
+
+      <div class="moon-menu-item" id="moon-menu-item-back2top">
+        <i class="fa fa-chevron-up"></i>
+      </div>
+
+  </div>
+
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"/>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"/>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon">
+        <i class="fa fa-ellipsis-v"></i>
+      </div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                如何将ApiDemos嵌入到自己的工程当中
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time title="创建于" itemprop="dateCreated" datetime="2016-12-01T16:48:12+08:00">
+              2016-12-01
+            </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2016/12/01/如何将ApiDemos嵌入到自己的工程当中/" class="leancloud_visitors" data-flag-title="如何将ApiDemos嵌入到自己的工程当中">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span id="busuanzi_value_page_pv"></span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+          
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.7k</span>
+            </span>
+          
+          &nbsp; | &nbsp;
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>2 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://images.weserv.nl/?url=https://www.fancyga.com/images/apidemos.jpg" class="full-image"></p>
+<p>题目看起来比较简单，考察的却是很多能力，要做好没那么简单。</p>
+<p>有许多人，用开源框架用得很六，但很多基本的原理都不知道。很多android API在<code>ApiDemos</code>这个项目里面都已经有例子，里面很多DEMO是值得我们去学习的，但实际是很多人都没有认真去看。现在比较流行用<code>gradle</code>来构建工程，可是找了半天，很难找到<code>ApiDemos</code>的<code>gradle</code>工程，有的也是比较旧的，错误百出。于是自己做了一个，如果你想看可以<a href="https://github.com/AfirSraftGarrier/ACCDemoAndroid" target="_blank" rel="noopener">来这</a>。下面总结一下将<code>ApiDemos</code>这个工程导入自己工程要注意的东西。</p>
+<h6 id="怎么下载到较新的ApiDemos源码？有这几种方法："><a href="#怎么下载到较新的ApiDemos源码？有这几种方法：" class="headerlink" title="怎么下载到较新的ApiDemos源码？有这几种方法："></a>怎么下载到较新的<code>ApiDemos</code>源码？有这几种方法：</h6><ol>
+<li>SDK自带，在SDK的<code>sample</code>目录下，这样要看SDK版本是否较新，还有之前有没有选择下载。</li>
+<li>网上搜索。这可能是最笨拙的方法，下载到也可能编译错误一大堆。</li>
+<li>到android <code>Github</code><a href="https://github.com/android/platform_development/tree/master/samples/ApiDemos" target="_blank" rel="noopener">镜像</a>下载。注意这里只要下载GITHUB工程的一部分，所以要用SVN下载，并且下载路径中的<code>tree/master</code>要换成<code>trunk</code>。</li>
+<li>直接到<a href="https://android.googlesource.com/platform/development.git" target="_blank" rel="noopener">官网</a>下载，这个可以直接下文件夹就可以。</li>
+</ol>
+<h6 id="怎么讲ApiDemos从eclipse工程变成gradle工程？有这些方法："><a href="#怎么讲ApiDemos从eclipse工程变成gradle工程？有这些方法：" class="headerlink" title="怎么讲ApiDemos从eclipse工程变成gradle工程？有这些方法："></a>怎么讲<code>ApiDemos</code>从<code>eclipse</code>工程变成<code>gradle</code>工程？有这些方法：</h6><ol>
+<li>可以先用eclipse导出一个<code>build.gradle</code>文件，然后用android studio通过<code>gradle</code>文件导入工程。</li>
+<li>用AS导入工程的时候选择<code>Eclipse ADT...</code>，这样很方便，但也不一定成功。</li>
+</ol>
+<h6 id="项目中的一些问题"><a href="#项目中的一些问题" class="headerlink" title="项目中的一些问题"></a>项目中的一些问题</h6><p>想不到像<code>google</code>这么大的公司也这么不重视细节，非常好的项目，却有这些低级问题。来说说遇到的问题和解决方法。</p>
+<ul>
+<li><code>preference_switch</code>不是xml文件问题，解决方法就是将其改为xml文件。</li>
+<li>No resource found that matches the given name (at ‘style’ with value ‘@android:style/Widget.Material.SeekBar.Discrete’)。如果遇到这类错误，请把鼠标移动到错误代码上，它会提示你怎么做。答案是要修改<code>compileSdkVersion</code>到合适的版本。</li>
+<li>程序包android.support.annotation不存在，这里有几种方法，可以通过<code>project structure</code>中添加<code>maven</code>依赖，也可以直接在<code>gradle</code>文件中添加依赖代码。这里是要添加<code>v4</code>依赖，当然也可以添加<code>v7</code>依赖，要注意<code>gradle</code>的语法，可以用<code>+</code>代替具体的版本号。另外有些错误，其实看工具提示就可以解决。</li>
+<li>com.google.android.mms找不到的问题，这个真搞不懂谷歌要做什么，这个包在SDK当中，有<code>@hide</code>标注，是不开放的。因此我们是无法在自己代码中import的。解决方法：可以自己修改源码，编一个SDK，太麻烦；可以自己用反射来实现，这样要修改<code>ApiDemos</code>大堆源码，很不方便；直接删掉相关demo，这个方法简单粗暴；将错误的地方注释掉，嗯，这个方法可以让它有个demo界面，但功能先暂时不管，比较可取。</li>
+</ul>
+<h6 id="如何将ApiDemos导入到自己的工程"><a href="#如何将ApiDemos导入到自己的工程" class="headerlink" title="如何将ApiDemos导入到自己的工程"></a>如何将<code>ApiDemos</code>导入到自己的工程</h6><p>也许这个问题很少人会去想。这也考验人解决项目集成问题能力，而不仅仅是在<code>gradle</code>里面加个<code>EventBus</code>库这么简单。考虑到要做个DEMO，这个demo要包含<code>ApiDemo</code>，而且包名要用自己的。有人说改个包名就可以了，很简单。但这里其实有许多问题要处理。</p>
+<ul>
+<li>首先将要集成的代码拷贝到相应的位置。这是后会有很多包名错误，不用管先。</li>
+<li>资源文件全局搜索，将包名改过来。</li>
+<li>代码全局搜索，将包名改过来。</li>
+<li>AIDL文件也用同样要修改。注意AIDL要放在aidl目录下，即本文的插图那样形式。</li>
+<li>将Manifest文件改过来，注意这是需要技巧的，很容易将文件改错，注意搜索匹配问题。</li>
+<li>按照原来的逻辑修改，这要熟悉下<code>ApiDemos.java</code>的巧妙逻辑(巧妙运用了activity的<code>name</code>和<code>label</code>标签)。</li>
+</ul>
+<p>这里面做一些android的多个DEMO集成可以考虑下参考<code>ApiDemos.java</code>的实现。如果要在原来的基础上加上一层目录的话，可以参考下<a href="https://github.com/AfirSraftGarrier/ACCDemoAndroid/blob/master/app/src/main/java/afirsraftgarrier/demoandroid/MainActivity.java" target="_blank" rel="noopener">这里</a>的修改。</p>
+
+      
+    </div>
+      
+  <div class="popular-posts-header">推荐文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2015/06/16/Android项目javadoc时出现的几个错误解决/" rel="bookmark">Android项目javadoc时出现的几个错误解决</a></div>
+      
+    </li>
+  
+  </ul>
+
+    
+
+    <div>
+      
+        
+  <div id="end-share">
+        <div id="eof" class="print-invisible">
+            <hr class="eof">
+            <div class="word">发现镓</div>
+        </div>
+        <style type="text/css">
+           .word {
+              position: relative;
+              text-align: center;
+              top: -25px;
+              width: 100%;
+           }
+            hr.eof {
+              text-align: center;
+              border: 0;
+              height: 1px;
+              background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+              margin: 40px 0px 10px 0;
+            }
+            hr.eof:after {
+              content: '_';
+              display: inline-block;
+              position: relative;
+              top: -13px;
+              padding: 0 25px;
+              background: #fff;
+              color: #8c8b8b;
+            }
+        </style>
+        <div align="center">
+            <p><a href="http://www.fancyga.com/2016/12/01/如何将ApiDemos嵌入到自己的工程当中/">本文章</a>由<a href="http://www.fancyga.com">发现镓</a>制作，转载请注明出处</p>
+        </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/android/" rel="tag"><i class="menu-item-icon fa fa-tags fa-fw"></i> android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/05/delete-youku-ads/" rel="next" title="怎么去除优酷广告">
+                <i class="fa fa-chevron-left"></i> 怎么去除优酷广告
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/28/Hexo使用七牛注意事项/" rel="prev" title="Hexo使用七牛注意事项">
+                Hexo使用七牛注意事项 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="waline"></div>
+      <script type="module">
+        import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+        init({
+          el: '#waline',
+          lang: 'zh-CN',
+          serverURL: 'https://waline.fancyga.com',
+        });
+      </script>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="发现镓">
+          <p class="site-author-name" itemprop="name">发现镓</p>
+          <p class="site-description motion-element" itemprop="description">fancyga ≈ 发现镓</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">288</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">96</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">311</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/AfirSraftGarrier" target="_blank" title="GitHub" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1940794292" target="_blank" title="Weibo" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/afirsraftgarrier-29" target="_blank" title="ZhiHu" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://blog.csdn.net/AfirSraftGarrier" target="_blank" title="CSDN" rel="external nofollow">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank" rel="external nofollow">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons">
+            </a>
+          </div>
+        
+
+        <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=KfzQR1RfxJNVFk79QPaTuMGLxLPPyhkzlbySVmQ8LjE"></script>
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-6"><a class="nav-link" href="#怎么下载到较新的ApiDemos源码？有这几种方法："><span class="nav-number">1.</span> <span class="nav-text">怎么下载到较新的ApiDemos源码？有这几种方法：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#怎么讲ApiDemos从eclipse工程变成gradle工程？有这些方法："><span class="nav-number">2.</span> <span class="nav-text">怎么讲ApiDemos从eclipse工程变成gradle工程？有这些方法：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#项目中的一些问题"><span class="nav-number">3.</span> <span class="nav-text">项目中的一些问题</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如何将ApiDemos导入到自己的工程"><span class="nav-number">4.</span> <span class="nav-text">如何将ApiDemos导入到自己的工程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">发现镓</span>
+</div>
+
+<div class="copyright">
+  <span>HEXO-NEXT&nbsp; | &nbsp;粤ICP备14100221号</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-area-chart"></i>
+  </span>
+  <span class="post-meta-item-text">站点总字数：</span>
+  
+  <span title="站点总字数">230k</span>
+  <span class="post-meta-divider">&nbsp; | &nbsp;</span>
+  <span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+  </span>
+    <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+  
+  <span title="站点阅读时长">3:29</span>
+
+</div>
+
+<div class="copyright">
+  
+
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+
+</div>
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/cdn/jquery.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/fastclick.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.lazyload.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" src="/cdn/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.loli.net/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+  
+
+  
+<script type="text/javascript" async src="//zz.bdstatic.com/linksubmit/push.js">
+</script>
+
+
+  
+
+  
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.css">
+
+  
+  
+    
+  
+  <script src="//cdn.bootcss.com/instantsearch.js/1.5.1/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+</body>
+</html>
